@@ -1,7 +1,7 @@
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
-import { Request } from "express";
+import { Request, Response } from "express";
 
 const storageDir = path.join(__dirname, "..", "storage");
 if (!fs.existsSync(storageDir)) {
@@ -10,8 +10,8 @@ if (!fs.existsSync(storageDir)) {
 
 const filelog = fs.createWriteStream(path.join(storageDir, "acess.log"), { flags: "a" });
 
-morgan.token('cid', function getCid (req: Request) { // Should now work directly
-  return req.cid || 'no-cid'; // Should now work directly
+morgan.token('cid', function  (req: Request, res: Response) {
+  return 'no-cid';
 });
 
 const customLogFormat = ":remote-addr - :remote-user [:date[clf]] \":method :url HTTP/:http-version\" :status :res[content-length] \":referrer\" \":user-agent\" cid=:cid";

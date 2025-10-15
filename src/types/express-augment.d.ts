@@ -2,6 +2,12 @@ import "express";
 
 declare module 'express' {
     interface Request {
-      cid?: string; // Your custom Correlation ID property
+      cid?: string; 
     }
   }
+
+declare module 'morgan' {
+  interface Request {
+      cid?: string;
+  }
+}

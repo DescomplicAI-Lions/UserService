@@ -10,12 +10,12 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"], // Keep this
-    "isolatedModules": false // Keep this as false
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "isolatedModules": false 
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.d.ts" // <--- Ensure this is present to pick up the new .d.ts file
+    "src/**/*.d.ts"
   ],
   "exclude": [
     "node_modules"
