@@ -1,19 +1,21 @@
-class AppError extends Error {
+export class AppError extends Error {
+    public readonly status: number; // HTTP status code
+    public readonly code: string;   // Machine-readable error code
+    public readonly details?: any;  // Detalhes opcionais a mais
+  
     constructor(
-        msg: string,
-        public code: string = 'APP_ERROR',
-        public status: number = 400,
-        public details?: Record<string, unknown>,
-        public options?: {cause?: Error}
+      message: string,
+      code: string,
+      status: number = 500,
+      details?: any,
+    //   options?: ErrorOptions
     ) {
-        super(msg);
-        this.name = 'AppError';
-        if (options?.cause) {
-            (this as any).cause = options.cause;
-        }
+      super(message);
+      this.name = 'AppError'; // Nome do error
+      this.status = status;
+      this.code = code;
+      this.details = details;
+  
+      Object.setPrototypeOf(this, AppError.prototype);
     }
-}
-
-export {
-    AppError
-};
+  }
