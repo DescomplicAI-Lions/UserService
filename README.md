@@ -61,3 +61,16 @@
         ▪ Model/Service: UserService
             • Executa uma PostgreSQL DELETE query da tabela users com uma cláusula WHERE id = :id.
             • PostgreSQL Note: Recomenda-se fortemente implementar soft deletes (ex: definir uma coluna is_active boolean ou deleted_at timestamp) em vez de hard deletes para preservar a integridade dos dados, trilhas de auditoria e simplificar a recuperação. Se for realizar hard delete, garanta que as ON DELETE foreign key constraints sejam tratadas (ex: RESTRICT, SET NULL, CASCADE - CASCADE deve ser usado com extrema cautela).
+
+teste recuperação:
+    POST /auth/request-magic-link:
+
+    http://localhost:3000/auth/request-magic-link.
+
+    Body: {"email": "test@example.com"}
+
+POST /auth/authenticate-magic-link:
+
+    http://localhost:3000/auth/authenticate-magic-link.
+
+    Body: {"token": "TOKEN_GERADO"}

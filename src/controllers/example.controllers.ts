@@ -11,7 +11,7 @@ class ExampleController {
         try {
             throw new AppError("Erro padrão", "APP_INFO", 401);
         } catch(err) {
-            throw new AppError("Erro padrão", "APP_INFO", 402, req.body, { cause: err as Error });
+            // throw new AppError("Erro padrão", "APP_INFO", 402, req.body, { cause: err as Error });
         }
     }
 }
