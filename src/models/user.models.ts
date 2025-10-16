@@ -2,9 +2,11 @@ export interface User {
   id: number;
   nome: string;
   email: string;
-  senha: string; // IMPORTANTE: vai guardar senha encriptada depos de service
+  senha: string; // IMPORTANTE: vai guardar senha encriptada depois de service
   telefone: string;
   createdAt: Date;
+  temporaryLoginToken?: string; // para recuperação de senha
+  temporaryLoginExpires?: Date;
 }
 
 const users: User[] = [];
@@ -46,4 +48,17 @@ export const UserModel = {
       users.splice(index, 1);
       return true;
   },
+
+  findByTemporaryLoginToken: (token: string): User | undefined => {
+    const now = new Date();
+    return users.find(u => u.temporaryLoginToken === token && u.temporaryLoginExpires && u.temporaryLoginExpires > now);
+  },
+
+  clearTemporaryLoginToken: (id: number): void => {
+    const user = UserModel.getById(id);
+    if (user) {
+      user.temporaryLoginToken = undefined;
+      user.temporaryLoginExpires = undefined;
+    }
+  }
 };

@@ -11,3 +11,5 @@ declare module 'morgan' {
       cid?: string;
   }
 }
+
+declare module 'jsonwebtoken';

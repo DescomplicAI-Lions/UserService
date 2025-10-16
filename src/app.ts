@@ -7,6 +7,7 @@ import { log } from "./middleware/log.middleware";
 import { errorHandling } from "./middleware/error-handling.middleware";
 // import { database } from './database/database'; 
 import { cid } from "./middleware/cid.middleware";
+import magicLinkRoutes from './routes/magicLink.routes';
 
 const app: Express = express();
 
@@ -20,6 +21,8 @@ app.use(log);
 
 // Configurações das rotas
 app.use(routes);
+
+app.use('/auth', magicLinkRoutes);
 
 
 // (async () => {

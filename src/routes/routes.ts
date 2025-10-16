@@ -9,4 +9,4 @@ routes.use("/users", userRoutes);
 
 export {
     routes
-}
+}// http://localhost:3000/auth/authenticate-magic-link 
