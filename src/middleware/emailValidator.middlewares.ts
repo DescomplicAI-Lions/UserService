@@ -30,7 +30,7 @@ async function hasMxRecords(domain: string): Promise<boolean> {
     });
 }
 
-async function verifyEmailDeliverability(email: string): Promise<boolean> {
+export async function verifyEmailDeliverability(email: string): Promise<boolean> {
     if (!isValidEmailSyntax(email)) {
         console.log(`"${email}" failed syntax validation.`);
         return false;
@@ -52,19 +52,4 @@ async function verifyEmailDeliverability(email: string): Promise<boolean> {
 
     console.log(`"${email}" passed syntax and MX record checks.`);
     return true;
-}
-
-async function runValidation(email: string) {
-    console.log("\n--- Running Email Verification Examples ---");
-
-    const emailsToTest = email;
-
-    for (const email of emailsToTest) {
-        const isValid = await verifyEmailDeliverability(email);
-        console.log(`Is "${email}" likely deliverable? ${isValid}`);
-    }
-}
-
-export {
-    runValidation
 }
