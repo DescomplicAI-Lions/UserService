@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.services";
 import { AppError } from "../errors/AppError";
+import { runValidation } from "../middleware/emailValidator.middlewares";
 
 export class UserController {
   async getAll(req: Request, res: Response) {
@@ -25,6 +26,7 @@ export class UserController {
     }
   }
 
+//TODO adicionar validação de email
   async create(req: Request, res: Response) {
     try {
       const { nome, email, senha, telefone } = req.body;
