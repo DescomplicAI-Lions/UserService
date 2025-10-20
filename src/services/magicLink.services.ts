@@ -28,14 +28,14 @@ export class MagicLinkService {
     console.log(`[${(global as any).cid || 'no-cid'}] [DEBUG] Magic link for ${email}: ${magicLinkUrl}`); // Para teste
     await this.emailService.sendPasswordResetEmail(user.email, magicLinkUrl); 
 
-    return 'If an account with that email exists, a magic login link has been sent.';
+    return 'Se uma conta com aquele email existe, um magic link foi enviado.';
   }
 
   async authenticateMagicLink(magicLinkToken: string): Promise<string> {
     const user = UserModel.findByTemporaryLoginToken(magicLinkToken);
 
     if (!user) {
-      throw new AppError('INVALID_OR_EXPIRED_TOKEN', 'Magic login link is invalid or has expired.');
+      throw new AppError('INVALID_OR_EXPIRED_TOKEN', 'Magic login link está inválido ou expirado');
     }
 
     UserModel.clearTemporaryLoginToken(user.id);
