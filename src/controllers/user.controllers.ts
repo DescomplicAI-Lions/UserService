@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.services";
 import { AppError } from "../errors/AppError";
+import { verifyEmailDeliverability } from "../middleware/emailValidator.middlewares";
 
 export class UserController {
   async getAll(req: Request, res: Response) {
@@ -28,13 +29,21 @@ export class UserController {
   async create(req: Request, res: Response) {
     try {
       const { nome, email, senha, telefone } = req.body;
-      const newUser = await UserService.createUser({ nome, email, senha, telefone });
-      res.status(201).json(newUser);
+      
+      const isValid = await verifyEmailDeliverability(email);
+      
+      if (isValid) {
+        const newUser = await UserService.createUser({ nome, email, senha, telefone });
+        res.status(201).json(newUser);
+      } else {
+        throw new AppError("Email não encontrado", "EMAIL_NOT_FOUND", 404);
+      }
     } catch (err) {
       throw err;
     }
   }
-
+  
+  //TODO adicionar validação de email
   async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
