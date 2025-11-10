@@ -74,3 +74,7 @@ POST /auth/authenticate-magic-link:
     http://localhost:3000/auth/authenticate-magic-link.
 
     Body: {"token": "TOKEN_GERADO"}
+
+LINK VERCEL
+
+    https://user-service-gamma.vercel.app/
