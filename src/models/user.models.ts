@@ -6,7 +6,7 @@ export const UserModel = {
   async getAll(): Promise<User[]> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM users`
+       FROM user`
     );
     if (!result.status) {
       throw new AppError("Failed to fetch users", "DATABASE_ERROR", 500, result.error);
@@ -17,7 +17,7 @@ export const UserModel = {
   async getById(id: number): Promise<User | undefined> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM users WHERE id = $1`,
+       FROM user WHERE id = $1`,
       [id]
     );
     if (!result.status) {
@@ -29,7 +29,7 @@ export const UserModel = {
   async getByEmail(email: string): Promise<User | undefined> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, password_user, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM users WHERE email = $1`,
+       FROM user WHERE email = $1`,
       [email]
     );
     if (!result.status) {
@@ -117,7 +117,7 @@ export const UserModel = {
 
   async delete(id: number): Promise<boolean> {
     const result = await database.query<User>(
-      `DELETE FROM users WHERE id = $1 RETURNING id`,
+      `DELETE FROM user WHERE id = $1 RETURNING id`,
       [id]
     );
     if (!result.status) {
@@ -129,7 +129,7 @@ export const UserModel = {
   async findByTemporaryLoginToken(token: string): Promise<User | undefined> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM users WHERE temp_login_token = $1 AND temp_login_expire > NOW()`,
+       FROM user WHERE temp_login_token = $1 AND temp_login_expire > NOW()`,
       [token]
     );
     if (!result.status) {
