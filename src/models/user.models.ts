@@ -6,7 +6,7 @@ export const UserModel = {
   async getAll(): Promise<User[]> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM user`
+       FROM descomplicai.user`
     );
     if (!result.status) {
       throw new AppError("Failed to fetch users", "DATABASE_ERROR", 500, result.error);
@@ -17,7 +17,7 @@ export const UserModel = {
   async getById(id: number): Promise<User | undefined> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM user WHERE id = $1`,
+       FROM descomplicai.user WHERE id = $1`,
       [id]
     );
     if (!result.status) {
@@ -29,7 +29,7 @@ export const UserModel = {
   async getByEmail(email: string): Promise<User | undefined> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, password_user, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM user WHERE email = $1`,
+       FROM descomplicai.user WHERE email = $1`,
       [email]
     );
     if (!result.status) {
@@ -41,7 +41,7 @@ export const UserModel = {
   async create(data: CreateUserDTO): Promise<User> {
     const { name_user, email, password_user, phone, profile_image, type_user, status } = data;
     const result = await database.query<User>(
-      `INSERT INTO users (name_user, email, password_user, phone, profile_image, type_user, status, creation_data)
+      `INSERT INTO descomplicai.user (name_user, email, password_user, phone, profile_image, type_user, status, creation_data)
        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
        RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone`,
       [name_user, email, password_user, phone || null, profile_image || null, type_user || null, status || null]
@@ -117,7 +117,7 @@ export const UserModel = {
 
   async delete(id: number): Promise<boolean> {
     const result = await database.query<User>(
-      `DELETE FROM user WHERE id = $1 RETURNING id`,
+      `DELETE FROM descomplicai.user WHERE id = $1 RETURNING id`,
       [id]
     );
     if (!result.status) {
@@ -129,7 +129,7 @@ export const UserModel = {
   async findByTemporaryLoginToken(token: string): Promise<User | undefined> {
     const result = await database.query<User>(
       `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
-       FROM user WHERE temp_login_token = $1 AND temp_login_expire > NOW()`,
+       FROM descomplicai.user WHERE temp_login_token = $1 AND temp_login_expire > NOW()`,
       [token]
     );
     if (!result.status) {
