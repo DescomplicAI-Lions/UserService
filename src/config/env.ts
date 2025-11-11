@@ -16,4 +16,6 @@ export const config = {
     db_database: process.env.DB_DATABASE,
     db_user: process.env.DB_USER,
     db_password: process.env.DB_PASSWORD,
+
+    api_mail: process.env.API_MAIL
 };
