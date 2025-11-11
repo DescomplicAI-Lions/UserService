@@ -102,7 +102,7 @@ export const UserModel = {
     }
 
     const result = await database.query<User>(
-      `UPDATE users SET ${setClauses.join(', ')} WHERE id = $1
+      `UPDATE descomplicai.user SET ${setClauses.join(', ')} WHERE id = $1
        RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire`,
       values
     );
@@ -140,7 +140,7 @@ export const UserModel = {
 
   async clearTemporaryLoginToken(id: number): Promise<void> {
     const result = await database.query(
-      `UPDATE users SET temp_login_token = NULL, temp_login_expire = NULL WHERE id = $1`,
+      `UPDATE descomplicai.user SET temp_login_token = NULL, temp_login_expire = NULL WHERE id = $1`,
       [id]
     );
     if (!result.status) {
