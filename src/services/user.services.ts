@@ -1,16 +1,20 @@
-import { UserModel } from "../models/user.models"; // Import the DB interaction layer
-import { User, CreateUserDTO, UpdateUserDTO } from "../interfaces/user.interface"; // Import the User interface
+import { UserModel } from "../models/user.models";
+import { User, CreateUserDTO, UpdateUserDTO } from "../interfaces/user.interface";
 import { AppError } from "../errors/AppError";
 import bcrypt from 'bcrypt';
+import { EmailConfirmationService } from './emailConfirmation.services'; 
+import { EmailService } from './email.services'; 
 
 const saltRounds = 10;
+const emailService = new EmailService();
+const emailConfirmationService = new EmailConfirmationService(emailService); 
 
 export class UserService {
-  static async getAll(): Promise<User[]> { // Make it async
+  static async getAll(): Promise<User[]> {
     return UserModel.getAll();
   }
 
-  static async getById(id: number): Promise<User | undefined> { // Make it async
+  static async getById(id: number): Promise<User | undefined> {
     return UserModel.getById(id);
   }
 
@@ -25,7 +29,6 @@ export class UserService {
         throw new AppError("A senha deve ter no mínimo 6 caracteres.", "VALIDATION_ERROR", 400);
     }
 
-    // Check for existing user by email (this will now hit the DB)
     const existingUser = await UserModel.getByEmail(data.email);
     if (existingUser) {
       throw new AppError("E-mail já cadastrado", "EMAIL_ALREADY_EXISTS", 409);
@@ -33,16 +36,19 @@ export class UserService {
 
     const hashedPassword = await bcrypt.hash(data.senha, saltRounds);
 
-    // Map incoming DTO to database User structure
     const userToCreate: CreateUserDTO = {
         name_user: data.nome,
         email: data.email,
         password_user: hashedPassword,
         phone: data.telefone,
-        // Add other default values or map from data if available
+        is_verified: false,
     };
 
-    return UserModel.create(userToCreate);
+    const newUser = await UserModel.create(userToCreate);
+
+    await emailConfirmationService.initiateEmailConfirmation(newUser.email);
+
+    return newUser;
   }
 
   static async updateUser(
@@ -80,7 +86,7 @@ export class UserService {
     return updatedUser;
   }
 
-  static async deleteUser(id: number): Promise<void> { // Make it async
+  static async deleteUser(id: number): Promise<void> {
     const deleted = await UserModel.delete(id);
     if (!deleted) {
       throw new AppError("Usuário não encontrado", "USER_NOT_FOUND", 404);
