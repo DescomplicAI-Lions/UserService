@@ -12,13 +12,32 @@ class EmailService {
         resetUrl
       });
 
-      console.log(`[EmailService] Email enviado com sucesso para ${to}.`);
+      console.log(`[EmailService] Email de redefinição enviado com sucesso para ${to}.`);
       console.log(`[EmailService] Resposta do serviço:`, response.data);
     } catch (error: any) {
-      console.error(`[EmailService] Erro ao enviar e-mail:`, error.message);
+      console.error(`[EmailService] Erro ao enviar e-mail de redefinição:`, error.message);
       throw new Error("Falha ao enviar o e-mail de redefinição de senha.");
     }
   }
+
+  async sendEmailConfirmation(to: string, confirmationLink: string): Promise<void> {
+    console.log(`[EmailService] Sending email confirmation to: ${to}`);
+    console.log(`[EmailService] Confirmation Link: ${confirmationLink}`);
+
+    try {
+      const response = await axios.post(`${config.api_mail}/send-confirmation-email`, {
+        to,
+        confirmationLink 
+      });
+
+      console.log(`[EmailService] Email de confirmação enviado com sucesso para ${to}.`);
+      console.log(`[EmailService] Resposta do serviço:`, response.data);
+    } catch (error: any) {
+      console.error(`[EmailService] Erro ao enviar e-mail de confirmação:`, error.message);
+      throw new Error("Falha ao enviar o e-mail de confirmação.");
+    }
+  }
+  // --- END NEW METHOD ---
 }
 
 export { EmailService };

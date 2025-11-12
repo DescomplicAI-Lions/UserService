@@ -5,7 +5,7 @@ import { AppError } from "../errors/AppError";
 export const UserModel = {
   async getAll(): Promise<User[]> {
     const result = await database.query<User>(
-      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
+      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
        FROM descomplicai.user`
     );
     if (!result.status) {
@@ -16,7 +16,7 @@ export const UserModel = {
 
   async getById(id: number): Promise<User | undefined> {
     const result = await database.query<User>(
-      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
+      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
        FROM descomplicai.user WHERE id = $1`,
       [id]
     );
@@ -28,7 +28,7 @@ export const UserModel = {
 
   async getByEmail(email: string): Promise<User | undefined> {
     const result = await database.query<User>(
-      `SELECT id, name_user, email, password_user, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
+      `SELECT id, name_user, email, password_user, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
        FROM descomplicai.user WHERE email = $1`,
       [email]
     );
@@ -41,9 +41,9 @@ export const UserModel = {
   async create(data: CreateUserDTO): Promise<User> {
     const { name_user, email, password_user, phone, profile_image, type_user, status } = data;
     const result = await database.query<User>(
-      `INSERT INTO descomplicai.user (name_user, email, password_user, phone, profile_image, type_user, status, creation_data)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
-       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone`,
+      `INSERT INTO descomplicai.user (name_user, email, password_user, phone, profile_image, type_user, status, creation_data, is_verified)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), FALSE)
+       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, is_verified`,
       [name_user, email, password_user, phone || null, profile_image || null, type_user || null, status || null]
     );
     if (!result.status || result.data.length === 0) {
@@ -96,14 +96,27 @@ export const UserModel = {
       setClauses.push(`temp_login_expire = $${paramIndex++}`);
       values.push(data.temp_login_expire);
     }
+    if (data.is_verified !== undefined) {
+      setClauses.push(`is_verified = $${paramIndex++}`);
+      values.push(data.is_verified);
+    }
+    if (data.confirmation_token !== undefined) {
+      setClauses.push(`confirmation_token = $${paramIndex++}`);
+      values.push(data.confirmation_token);
+    }
+    if (data.confirmation_token_expires !== undefined) {
+      setClauses.push(`confirmation_token_expires = $${paramIndex++}`);
+      values.push(data.confirmation_token_expires);
+    }
+    // --- END ADDITIONS ---
 
     if (setClauses.length === 0) {
-      return this.getById(id); // sem update, retorna o user atual
+      return this.getById(id); 
     }
 
     const result = await database.query<User>(
       `UPDATE descomplicai.user SET ${setClauses.join(', ')} WHERE id = $1
-       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire`,
+       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires`,
       values
     );
     if (!result.status || result.data.length === 0) {
@@ -123,12 +136,12 @@ export const UserModel = {
     if (!result.status) {
       throw new AppError("Failed to delete user", "DATABASE_ERROR", 500, result.error);
     }
-    return result.data.length > 0; // True se uma row foi deletada
+    return result.data.length > 0; 
   },
 
   async findByTemporaryLoginToken(token: string): Promise<User | undefined> {
     const result = await database.query<User>(
-      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire
+      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
        FROM descomplicai.user WHERE temp_login_token = $1 AND temp_login_expire > NOW()`,
       [token]
     );
@@ -146,5 +159,28 @@ export const UserModel = {
     if (!result.status) {
       throw new AppError("Failed to clear temporary login token", "DATABASE_ERROR", 500, result.error);
     }
+  },
+
+  async findByConfirmationToken(token: string): Promise<User | undefined> {
+    const result = await database.query<User>(
+      `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
+       FROM descomplicai.user WHERE confirmation_token = $1 AND confirmation_token_expires > NOW()`,
+      [token]
+    );
+    if (!result.status) {
+      throw new AppError("Failed to find user by confirmation token", "DATABASE_ERROR", 500, result.error);
+    }
+    return result.data[0] as User | undefined;
+  },
+
+  async clearConfirmationToken(id: number): Promise<void> {
+    const result = await database.query(
+      `UPDATE descomplicai.user SET confirmation_token = NULL, confirmation_token_expires = NULL WHERE id = $1`,
+      [id]
+    );
+    if (!result.status) {
+      throw new AppError("Failed to clear confirmation token", "DATABASE_ERROR", 500, result.error);
+    }
   }
+  // --- END NEW METHODS ---
 };

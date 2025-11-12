@@ -20,7 +20,10 @@ Rotas recuperação
 
     POST /auth/request-magic-link:
         Body: {"email": "test@example.com"}
-
-
     POST /auth/authenticate-magic-link:
         Body: {"token": "TOKEN_GERADO"}
+
+Rotas Confirmação
+
+    POST /email-confirmation/request-confirmation-link
+    GET /email-confirmation/confirm-email?token=YOUR_TOKEN
