@@ -19,7 +19,7 @@ export class EmailConfirmationService {
     }
 
     if (user.is_verified) {
-      return 'Este email já foi verificado.'; // User is already verified
+      return 'Este email já foi verificado.';
     }
 
     if (!config.app_jwt) {
@@ -29,10 +29,10 @@ export class EmailConfirmationService {
     const confirmationToken = sign(
       { userId: user.id, type: 'email_confirmation' },
       config.app_jwt,
-      { expiresIn: '24h' } // Longer expiration for confirmation
+      { expiresIn: '24h' }
     );
 
-    const confirmationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const confirmationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
     await UserModel.update(user.id, {
       confirmation_token: confirmationToken,
       confirmation_token_expires: confirmationExpires,
@@ -73,8 +73,8 @@ export class EmailConfirmationService {
     }
 
     if (user.is_verified) {
-        await UserModel.clearConfirmationToken(user.id); // Clear token even if already verified
-        return user; // Already verified, no need to re-verify
+        await UserModel.clearConfirmationToken(user.id); 
+        return user; 
     }
 
     await UserModel.update(user.id, {
