@@ -1,13 +1,12 @@
-import express, { Express } from "express";
-import { database } from './database/database';
-import { routes } from "./routes/routes";
 import cors from "cors";
+import express, { Express } from "express";
 import swagger from "swagger-ui-express";
-import { log } from "./middleware/log.middleware";
-import { errorHandling } from "./middleware/error-handling.middleware";
-import { cid } from "./middleware/cid.middleware";
+import { database } from "./database/database";
 import * as swaggerDocument from "./docs/swagger.json";
-import { config } from "./config/env";
+import { cid } from "./middleware/cid.middleware";
+import { errorHandling } from "./middleware/error-handling.middleware";
+import { log } from "./middleware/log.middleware";
+import { routes } from "./routes/routes";
 
 const app: Express = express();
 
@@ -20,22 +19,38 @@ app.use(log);
 
 // --- Swagger ---
 app.get("/swagger.json", (req, res) => res.json(swaggerDocument));
-app.use("/api-docs", swagger.serve, swagger.setup(null, {
-  swaggerOptions: { url: "/swagger.json" },
-}));
+app.use(
+   "/api-docs",
+   swagger.serve,
+   swagger.setup(null, {
+      swaggerOptions: { url: "/swagger.json" },
+   })
+);
 
 // --- Health Check ---
 app.get("/health", async (req, res) => {
-  try {
-    const dbCheck = await database.query('SELECT 1 as status');
-    if (dbCheck.status) {
-      res.status(200).json({ status: "UP", database: "Connected", timestamp: new Date().toISOString() });
-    } else {
-      res.status(500).json({ status: "DOWN", database: "Disconnected", error: dbCheck.error?.message });
-    }
-  } catch (error) {
-    res.status(500).json({ status: "DOWN", database: "Error", error: (error as Error).message });
-  }
+   try {
+      const dbCheck = await database.query("SELECT 1 as status");
+      if (dbCheck.status) {
+         res.status(200).json({
+            status: "UP",
+            database: "Connected",
+            timestamp: new Date().toISOString(),
+         });
+      } else {
+         res.status(500).json({
+            status: "DOWN",
+            database: "Disconnected",
+            error: dbCheck.error?.message,
+         });
+      }
+   } catch (error) {
+      res.status(500).json({
+         status: "DOWN",
+         database: "Error",
+         error: (error as Error).message,
+      });
+   }
 });
 
 // --- Main Routes ---
