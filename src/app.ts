@@ -60,4 +60,4 @@ app.use(routes);
 app.use(errorHandling);
 
 // --- Export only the app (no listen!) ---
-export { app };
+export default app;
