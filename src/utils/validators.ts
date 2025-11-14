@@ -90,7 +90,7 @@ export function validatePassword(password: string): {
       };
    }
 
-   // Regex: Checa todas as regras
+   // Regex: Checa todas as regra
    const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[\]{}|;:,.<>?-])[A-Za-z\d!@#$%^&*()_+=[\]{}|;:,.<>?-]{8,64}$/;
 

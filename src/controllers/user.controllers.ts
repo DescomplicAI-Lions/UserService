@@ -81,7 +81,7 @@ export class UserController {
 
          res.status(201).json(newUser);
       } catch (err) {
-         next(err); // Passa o erro para o middleware de errorHandling
+         next(err); // Passa o erro para o middleware de errorHandlin
       }
    }
 

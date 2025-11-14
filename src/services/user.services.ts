@@ -55,7 +55,7 @@ export class UserService {
       // 3. Cria no Banco (Lógica de negócio)
       const newUser = await UserModel.create(userToCreate);
 
-      // 4. Envia E-mail de Confirmação (Lógica de negócio)
+      // 4. Envia E-mail de Confirmação (Lógica de negócio
       await emailConfirmationService.initiateEmailConfirmation(newUser.email);
 
       return newUser;
