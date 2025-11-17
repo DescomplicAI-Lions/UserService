@@ -7,7 +7,7 @@ class EmailService {
     console.log(`[EmailService] Reset URL: ${resetUrl}`);
 
     try {
-      const response = await axios.post(`${config.api_mail}`, {
+      const response = await axios.post(`${config.api_mail}/`, {
         to,
         subject: "Redefinição de Senha ou Login Mágico", 
         html: `
