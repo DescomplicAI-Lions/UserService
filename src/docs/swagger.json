@@ -1,582 +1,491 @@
 {
-    "openapi": "3.0.0",
+    "openapi": "4.0.0",
     "info": {
-        "titulo": "UserService - Login/Cadastro e Validações",
-        "version": "1.0.0",
-        "description": "Documentação da API UserService"
+      "title": "UserServices API",
+      "description": "Documentação da API UserServices para o projeto DescomplicAI.",
+      "version": "2.0.0",
+      "contact": {
+        "email": "descomlpicai.lions@gmail.com"
+      }
     },
     "servers": [
-        {
-            "url": "http://localhost:3000"
-        }
+      {
+        "url": "http://localhost:3000",
+        "description": "Servidor local de desenvolvimento"
+      },
+      {
+        "url": "https://user-service-gamma.vercel.app/",
+        "description": "Servidor de produção"
+      }
     ],
-    "components": {
-        "schemas": {
-            "UserCreateDto": {
-                "type": "object",
-                "required": ["nome", "email", "senha", "telefone"],
-                "properties": {
-                    "nome": {
-                        "type": "string",
-                        "example": "Felipe Martins"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "felipemartins@exemplo.com"
-                    },
-                    "senha": {
-                        "type": "string",
-                        "format": "password",
-                        "minLength": 6,
-                        "example": "senhaSegura123"
-                    },
-                    "telefone": {
-                        "type": "string",
-                        "example": "5511987654321"
-                    }
-                }
-            },
-            "UserUpdateDto": {
-                "type": "object",
-                "properties": {
-                    "nome": {
-                        "type": "string",
-                        "example": "Felipe Martins Atualizado"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "felipemartins.novo@exemplo.com"
-                    },
-                    "senha": {
-                        "type": "string",
-                        "format": "password",
-                        "minLength": 6,
-                        "example": "novaSenhaSegura456"
-                    },
-                    "telefone": {
-                        "type": "string",
-                        "example": "5511998877665"
-                    }
-                }
-            },
-            "UserResponseDto": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "format": "int64",
-                        "example": 1
-                    },
-                    "nome": {
-                        "type": "string",
-                        "example": "Felipe Martins"
-                    },
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "felipemartins@exemplo.com"
-                    },
-                    "telefone": {
-                        "type": "string",
-                        "example": "5511987654321"
-                    },
-                    "createdAt": {
-                        "type": "string",
-                        "format": "date-time"
-                    }
-                }
-            },
-            "MagicLinkRequestDto": {
-                "type": "object",
-                "required": ["email"],
-                "properties": {
-                    "email": {
-                        "type": "string",
-                        "format": "email",
-                        "example": "felipemartins@exemplo.com"
-                    }
-                }
-            },
-            "MagicLinkAuthenticateDto": {
-                "type": "object",
-                "required": ["token"],
-                "properties": {
-                    "token": {
-                        "type": "string",
-                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    }
-                }
-            },
-            "ErrorResponse": {
-                "type": "object",
-                "properties": {
-                    "error": {
-                        "type": "string",
-                        "example": "VALIDATION_ERROR"
-                    },
-                    "msg": {
-                        "type": "string",
-                        "example": "Nome, email e senha são obrigatórios."
-                    },
-                    "cid": {
-                        "type": "string",
-                        "format": "uuid",
-                        "example": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
-                    }
-                }
-            }
-        }
-    },
+    "tags": [
+      {
+        "name": "System",
+        "description": "Health checks and system status"
+      },
+      {
+        "name": "Users",
+        "description": "User management operations"
+      },
+      {
+        "name": "Auth",
+        "description": "Magic Link authentication"
+      },
+      {
+        "name": "Email Confirmation",
+        "description": "Email verification endpoints"
+      }
+    ],
     "paths": {
-        "/health": {
-            "get": {
-                "summary": "Verifica a saúde da API",
-                "tags": [
-                    "Geral"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "A API está saudável."
+      "/health": {
+        "get": {
+          "tags": ["System"],
+          "summary": "Check API health",
+          "description": "Returns the status of the API and database connection.",
+          "responses": {
+            "200": {
+              "description": "Server is UP",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": { "type": "string", "example": "UP" },
+                      "database": { "type": "string", "example": "Connected" },
+                      "timestamp": { "type": "string", "format": "date-time" }
                     }
+                  }
                 }
-            }
-        },
-        "/hello-type": {
-            "get": {
-                "summary": "Endpoint de exemplo",
-                "tags": [
-                    "Geral"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Retorna uma mensagem de saudação."
-                    }
-                }
-            }
-        },
-        "/teste-error": {
-            "get": {
-                "summary": "Endpoint de teste de erro",
-                "tags": [
-                    "Geral"
-                ],
-                "responses": {
-                    "401": {
-                        "description": "Erro padrão de teste.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/users": {
-            "get": {
-                "summary": "Retorna todos os usuários",
-                "tags": [
-                    "Usuário"
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Lista de usuários retornada com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/UserResponseDto"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
+              }
             },
-            "post": {
-                "summary": "Cadastra um novo usuário",
-                "tags": [
-                    "Usuário"
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserCreateDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Usuário cadastrado com sucesso!",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserResponseDto"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Requisição inválida, faltando campos obrigatórios ou formato incorreto.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Email não encontrado ou não entregável.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "409": {
-                        "description": "E-mail já cadastrado.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
+            "500": {
+              "description": "Server is DOWN",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ErrorResponse"
+                  }
                 }
+              }
             }
-        },
-        "/users/{id}": {
-            "get": {
-                "summary": "Retorna um usuário pelo ID",
-                "tags": [
-                    "Usuário"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        },
-                        "description": "ID do usuário a ser retornado."
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Usuário retornado com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserResponseDto"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Usuário não encontrado.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "summary": "Atualiza um usuário existente",
-                "tags": [
-                    "Usuário"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        },
-                        "description": "ID do usuário a ser atualizado."
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UserUpdateDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Usuário atualizado com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UserResponseDto"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Requisição inválida, nenhum dado fornecido ou formato incorreto.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Usuário não encontrado.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor ou falha ao atualizar.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "summary": "Deleta um usuário pelo ID",
-                "tags": [
-                    "Usuário"
-                ],
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int64"
-                        },
-                        "description": "ID do usuário a ser deletado."
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Usuário deletado com sucesso."
-                    },
-                    "404": {
-                        "description": "Usuário não encontrado.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/request-magic-link": {
-            "post": {
-                "summary": "Solicita um link mágico para login",
-                "tags": [
-                    "Autenticação"
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/MagicLinkRequestDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Se uma conta com aquele email existe, um magic link foi enviado.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "msg": {
-                                            "type": "string",
-                                            "example": "Se uma conta com aquele email existe, um magic link foi enviado."
-                                        },
-                                        "cid": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "example": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Email é obrigatório para solicitar um magic link.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/auth/authenticate-magic-link": {
-            "post": {
-                "summary": "Autentica usando um link mágico",
-                "tags": [
-                    "Autenticação"
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/MagicLinkAuthenticateDto"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Login com magic link realizado com sucesso.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "token": {
-                                            "type": "string",
-                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                                        },
-                                        "msg": {
-                                            "type": "string",
-                                            "example": "Successfully logged in with magic link."
-                                        },
-                                        "cid": {
-                                            "type": "string",
-                                            "format": "uuid",
-                                            "example": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Token do magic link é obrigatório para autenticação.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Link de login mágico inválido ou expirado.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Erro interno do servidor.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+          }
         }
+      },
+      "/users": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Get all users",
+          "responses": {
+            "200": {
+              "description": "List of users",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Server Error",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Users"],
+          "summary": "Create a new user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserRequest"
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "User created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            },
+            "409": {
+              "description": "Email already exists",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/users/{id}": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Get user by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "integer" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "User found",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["Users"],
+          "summary": "Update user",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "integer" }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateUserRequest" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "User updated",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/User" }
+                }
+              }
+            },
+            "400": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Users"],
+          "summary": "Delete user",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "integer" }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "User deleted successfully"
+            },
+            "404": {
+              "description": "User not found",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/auth/request-magic-link": {
+        "post": {
+          "tags": ["Auth"],
+          "summary": "Request a magic login link",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["email"],
+                  "properties": {
+                    "email": { "type": "string", "format": "email" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Magic link sent",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "msg": { "type": "string" },
+                      "cid": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Missing email",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/auth/authenticate-magic-link": {
+        "post": {
+          "tags": ["Auth"],
+          "summary": "Authenticate using magic link token",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["token"],
+                  "properties": {
+                    "token": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Authenticated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "token": { "type": "string", "description": "Session JWT" },
+                      "msg": { "type": "string" },
+                      "cid": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid or expired token",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/email-confirmation/request-confirmation-link": {
+        "post": {
+          "tags": ["Email Confirmation"],
+          "summary": "Resend email confirmation link",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["email"],
+                  "properties": {
+                    "email": { "type": "string", "format": "email" }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Confirmation link sent",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "msg": { "type": "string" },
+                      "cid": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/email-confirmation/confirm-email": {
+        "get": {
+          "tags": ["Email Confirmation"],
+          "summary": "Confirm email address",
+          "parameters": [
+            {
+              "name": "token",
+              "in": "query",
+              "required": true,
+              "schema": { "type": "string" },
+              "description": "The confirmation token received via email"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Email confirmed",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "msg": { "type": "string" },
+                      "userId": { "type": "integer" },
+                      "email": { "type": "string" },
+                      "cid": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Missing token",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            },
+            "401": {
+              "description": "Invalid or expired token",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "User": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "integer" },
+            "name_user": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "creation_data": { "type": "string", "format": "date-time" },
+            "profile_image": { "type": "string", "nullable": true },
+            "type_user": { "type": "string", "nullable": true },
+            "status": { "type": "string", "nullable": true },
+            "phone": { "type": "string", "nullable": true },
+            "is_verified": { "type": "boolean" },
+            "temp_login_token": { "type": "string", "nullable": true },
+            "temp_login_expire": { "type": "string", "format": "date-time", "nullable": true },
+            "confirmation_token": { "type": "string", "nullable": true },
+            "confirmation_token_expires": { "type": "string", "format": "date-time", "nullable": true }
+          }
+        },
+        "CreateUserRequest": {
+          "type": "object",
+          "required": ["nome", "email", "senha"],
+          "properties": {
+            "nome": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 100,
+              "description": "Full name. Letters, spaces, hyphens, and apostrophes only."
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "minLength": 6,
+              "maxLength": 100
+            },
+            "senha": {
+              "type": "string",
+              "format": "password",
+              "minLength": 8,
+              "maxLength": 64,
+              "description": "Must contain uppercase, lowercase, number, and special char."
+            },
+            "telefone": {
+              "type": "string",
+              "description": "Optional phone number"
+            }
+          }
+        },
+        "UpdateUserRequest": {
+          "type": "object",
+          "properties": {
+            "nome": { "type": "string" },
+            "email": { "type": "string", "format": "email" },
+            "senha": { "type": "string", "format": "password" },
+            "telefone": { "type": "string" }
+          }
+        },
+        "ErrorResponse": {
+          "type": "object",
+          "properties": {
+            "error": { "type": "string", "example": "VALIDATION_ERROR" },
+            "msg": { "type": "string", "example": "Detailed error message" },
+            "cid": { "type": "string", "example": "uuid-v4-string" }
+          }
+        }
+      }
     }
-}
+  }
