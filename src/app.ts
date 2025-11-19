@@ -18,13 +18,23 @@ app.use(express.urlencoded({ extended: true }));
 app.use(log);
 
 // --- Swagger ---
+const swaggerOptions = {
+   customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui.min.css",
+   customJs: [
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-bundle.js",
+      "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.0.0/swagger-ui-standalone-preset.js",
+   ],
+   swaggerOptions: {
+      url: "/swagger.json",
+   },
+};
+
 app.get("/swagger.json", (req, res) => res.json(swaggerDocument));
+
 app.use(
    "/api-docs",
    swagger.serve,
-   swagger.setup(null, {
-      swaggerOptions: { url: "/swagger.json" },
-   })
+   swagger.setup(null, swaggerOptions)
 );
 
 // --- Health Check ---
