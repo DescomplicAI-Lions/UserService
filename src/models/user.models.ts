@@ -9,7 +9,7 @@ import {
 export const UserModel = {
    async getAll(): Promise<User[]> {
       const result = await database.query<User>(
-         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
+         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf
        FROM descomplicai.user`
       );
       if (!result.status) {
@@ -25,7 +25,7 @@ export const UserModel = {
 
    async getById(id: number): Promise<User | undefined> {
       const result = await database.query<User>(
-         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
+         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf
        FROM descomplicai.user WHERE id = $1`,
          [id]
       );
@@ -42,7 +42,7 @@ export const UserModel = {
 
    async getByEmail(email: string): Promise<User | undefined> {
       const result = await database.query<User>(
-         `SELECT id, name_user, email, password_user, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
+         `SELECT id, name_user, email, password_user, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf
        FROM descomplicai.user WHERE email = $1`,
          [email]
       );
@@ -66,11 +66,13 @@ export const UserModel = {
          profile_image,
          type_user,
          status,
+         born_date,
+         cpf
       } = data;
       const result = await database.query<User>(
-         `INSERT INTO descomplicai.user (name_user, email, password_user, phone, profile_image, type_user, status, creation_data, is_verified)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), FALSE)
-       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, is_verified`,
+         `INSERT INTO descomplicai.user (name_user, email, password_user, phone, profile_image, type_user, status, born_date, cpf, creation_data, is_verified)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), FALSE)
+       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, is_verified, born_date, cpf`,
          [
             name_user,
             email,
@@ -79,6 +81,8 @@ export const UserModel = {
             profile_image || null,
             type_user || null,
             status || null,
+            born_date,
+            cpf
          ]
       );
       if (!result.status || result.data.length === 0) {
@@ -153,7 +157,7 @@ export const UserModel = {
          setClauses.push(`confirmation_token_expires = $${paramIndex++}`);
          values.push(data.confirmation_token_expires);
       }
-      // --- END ADDITIONS ---
+      // --- FIM DAS ADIÇÕES ---
 
       if (setClauses.length === 0) {
          return this.getById(id);
@@ -161,7 +165,7 @@ export const UserModel = {
 
       const result = await database.query<User>(
          `UPDATE descomplicai.user SET ${setClauses.join(", ")} WHERE id = $1
-       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires`,
+       RETURNING id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf`,
          values
       );
       if (!result.status || result.data.length === 0) {
@@ -201,7 +205,7 @@ export const UserModel = {
 
    async findByTemporaryLoginToken(token: string): Promise<User | undefined> {
       const result = await database.query<User>(
-         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
+         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf
        FROM descomplicai.user WHERE temp_login_token = $1 AND temp_login_expire > NOW()`,
          [token]
       );
@@ -233,7 +237,7 @@ export const UserModel = {
 
    async findByConfirmationToken(token: string): Promise<User | undefined> {
       const result = await database.query<User>(
-         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires
+         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf
        FROM descomplicai.user WHERE confirmation_token = $1 AND confirmation_token_expires > NOW()`,
          [token]
       );
@@ -262,5 +266,5 @@ export const UserModel = {
          );
       }
    },
-   // --- END NEW METHODS ---
+   // --- FIM DOS MÉTODOS ---
 };

@@ -6,16 +6,16 @@ import {
    validateEmail,
    validateName,
    validatePassword,
+   validateCpf,
+   validateHCpf
 } from "../utils/validators";
 
 export class UserController {
    async getAll(req: Request, res: Response) {
       try {
-         const users: User[] = await UserService.getAll(); // Await the async call
+         const users: User[] = await UserService.getAll(); 
          res.json(users);
       } catch (err) {
-         // It's better to pass the error to a global error handler middleware
-         // For now, re-throw or handle here
          throw err;
       }
    }
@@ -30,7 +30,7 @@ export class UserController {
                400
             );
          }
-         const user: User | undefined = await UserService.getById(id); // Await
+         const user: User | undefined = await UserService.getById(id); 
          if (!user) {
             throw new AppError("Usuário não encontrado", "USER_NOT_FOUND", 404);
          }
@@ -41,9 +41,8 @@ export class UserController {
    }
 
    async create(req: Request, res: Response, next: NextFunction) {
-      // <-- Adicionei o 'next'
       try {
-         const { nome, email, senha, telefone } = req.body;
+         const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
 
          // Valida o Nome
          const nameValidation = validateName(nome);
@@ -71,12 +70,35 @@ export class UserController {
             );
          }
 
+         // Valida o cpf
+         // Produção
+         const cpfValidation = await validateCpf(cpf_usuario);
+         if (!cpfValidation.isValid) {
+            throw new AppError(
+               (await cpfValidation).message,
+               "VALIDATION_ERROR",
+               400
+            )
+         }
+
+         // Homologação
+         const cpfHValidation = await validateHCpf(cpf_usuario);
+         if (!cpfHValidation.isValid) {
+            throw new AppError(
+               (await cpfHValidation).message,
+               "VALIDATION_ERROR",
+               400
+            )
+         }
+
          // 2. Chama o Serviço (que agora só faz a lógica de negócio)
          const newUser: User = await UserService.createUser({
             nome,
             email,
             senha,
             telefone,
+            data_nascimento,
+            cpf_usuario
          });
 
          res.status(201).json(newUser);
@@ -95,7 +117,7 @@ export class UserController {
                400
             );
          }
-         const updatedUser: User = await UserService.updateUser(id, req.body); // Await
+         const updatedUser: User = await UserService.updateUser(id, req.body); 
          res.json(updatedUser);
       } catch (err) {
          throw err;
@@ -112,7 +134,7 @@ export class UserController {
                400
             );
          }
-         await UserService.deleteUser(id); // Await
+         await UserService.deleteUser(id);
          res.status(204).send();
       } catch (err) {
          throw err;
