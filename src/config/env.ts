@@ -17,5 +17,10 @@ export const config = {
     db_user: process.env.DB_USER,
     db_password: process.env.DB_PASSWORD,
 
-    api_mail: process.env.API_MAIL
+    api_mail: process.env.API_MAIL,
+
+    api_cpf_validator: process.env.API_CPF_VALIDATOR,
+    api_h_cpf_validator: process.env.API_H_CPF_VALIDATOR,
+    api_token_cpf: process.env.API_TOKEN_CPF,
+    api_h_token_cpf: process.env.API_H_TOKEN_CPF
 };
