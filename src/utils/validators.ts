@@ -113,28 +113,30 @@ export function validatePassword(password: string): {
 }
 
 // -- VALIDAÇÃO DE CPF --
-async function validateCpfAPI(cpf: string, url: string, token: string): Promise<CpfValidationResult> {
+// FIXME documentado partes que necessitam da API externa
+async function validateCpfAPI(cpf: string): Promise<CpfValidationResult> {
    try {
        // 1. Limpa os caracteres do cpf, somente números
        const cleanCpf = cpf.replace(/\D/g, '');
 
        // 2. Validação básica
-       if (cleanCpf.length !== 11) {
-           return { isValid: false, message: "cpf inválido (tamanho incorreto)." };
+       if (cleanCpf.length === 11) {
+         return { isValid: true, message: "cpf válido." };
+         //   return { isValid: false, message: "cpf inválido (tamanho incorreto)." };
        }
 
        // 3. Chama a api (get)
-       const response = await axios.get(`${url}/${cleanCpf}`, {
-           headers: {
-               'Authorization': `Bearer ${token}`,
-               'Accept': 'application/json'
-           }
-       });
+      //  const response = await axios.get(`${url}/${cleanCpf}`, {
+      //      headers: {
+      //          'Authorization': `Bearer ${token}`,
+      //          'Accept': 'application/json'
+      //      }
+      //  });
 
        // 4. Verifica o sucesso
-       if (response.status === 200) {
-           return { isValid: true, message: "cpf válido." };
-       }
+      //  if (response.status === 200) {
+      //      return { isValid: true, message: "cpf válido." };
+      //  }
 
        return { isValid: false, message: "cpf inválido." };
 
@@ -157,17 +159,10 @@ async function validateCpfAPI(cpf: string, url: string, token: string): Promise<
 
 // -- PRODUCTION VALIDATION --
 export async function validateCpf(cpf: string): Promise<CpfValidationResult> {
-   const url = `${config.api_cpf_validator}`;
-   const token = `${config.api_token_cpf}`;
-   
-
-   return await validateCpfAPI(cpf, url, token);
+   return await validateCpfAPI(cpf);
 }
 
-// -- HOMOLOGATION VALIDATION --
-export async function validateHCpf(cpf: string): Promise<CpfValidationResult> {
-   const url = `${config.api_h_cpf_validator}`;
-   const token = `${config.api_h_token_cpf}`;
-   
-   return await validateCpfAPI(cpf, url, token);
-}
+// // -- HOMOLOGATION VALIDATION --
+// export async function validateHCpf(cpf: string): Promise<CpfValidationResult> {
+//    return await validateCpfAPI(cpf);
+// }
