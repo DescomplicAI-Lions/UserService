@@ -168,20 +168,22 @@ export async function validateCpf(cpf: string): Promise<CpfValidationResult> {
 // }
 
 // -- VALIDAÇÃO DE IDADE
-export function validateBornDate(birth: Date): {
+export function validateBornDate(birth: Date | string): {
    isValid: boolean;
    message: string;
 } {
-   if (!birth || isNaN(birth.getTime())) { // verifica se os dados estão corretos
+   const birthDate = new Date(birth);
+
+   if (!birth || isNaN(birthDate.getTime())) { // verifica se os dados estão corretos
       return { isValid: false, message: "Data de nascimento inválida" };
    }
 
    const today = new Date(); // pegar o dia de hoje
    
-   let age = today.getFullYear() - birth.getFullYear(); // extrair a idade
+   let age = today.getFullYear() - birthDate.getFullYear(); // extrair a idade
    
-   const monthDiff = today.getMonth() - birth.getMonth(); // verifica se fez 18 no ano atual
-   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+   const monthDiff = today.getMonth() - birthDate.getMonth(); // verifica se fez 18 no ano atual
+   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--; 
    }
 
