@@ -6,7 +6,8 @@ import {
    validateEmail,
    validateName,
    validatePassword,
-   validateCpf
+   validateCpf,
+   validateBornDate
 } from "../utils/validators";
 
 export class UserController {
@@ -89,6 +90,15 @@ export class UserController {
          //       400
          //    )
          // }
+
+         const bornValidate = validateBornDate(data_nascimento);
+         if (!bornValidate.isValid) {
+            throw new AppError(
+               bornValidate.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
 
          // 2. Chama o Serviço (que agora só faz a lógica de negócio)
          const newUser: User = await UserService.createUser({

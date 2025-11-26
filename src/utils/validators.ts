@@ -166,3 +166,28 @@ export async function validateCpf(cpf: string): Promise<CpfValidationResult> {
 // export async function validateHCpf(cpf: string): Promise<CpfValidationResult> {
 //    return await validateCpfAPI(cpf);
 // }
+
+// -- VALIDAÇÃO DE IDADE
+export function validateBornDate(birth: Date): {
+   isValid: boolean;
+   message: string;
+} {
+   if (!birth || isNaN(birth.getTime())) { // verifica se os dados estão corretos
+      return { isValid: false, message: "Data de nascimento inválida" };
+   }
+
+   const today = new Date(); // pegar o dia de hoje
+   
+   let age = today.getFullYear() - birth.getFullYear(); // extrair a idade
+   
+   const monthDiff = today.getMonth() - birth.getMonth(); // verifica se fez 18 no ano atual
+   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--; 
+   }
+
+   if (age >= 18) {
+      return { isValid: true, message: "Sucesso: Usuário é maior de idade" };
+   }
+
+   return { isValid: false, message: "Erro: Usuário deve ter pelo menos 18 anos" };
+}
