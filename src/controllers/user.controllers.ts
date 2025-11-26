@@ -6,8 +6,7 @@ import {
    validateEmail,
    validateName,
    validatePassword,
-   validateCpf,
-   validateHCpf
+   validateCpf
 } from "../utils/validators";
 
 export class UserController {
@@ -82,14 +81,14 @@ export class UserController {
          // }
 
          // Homologação
-         const cpfHValidation = await validateHCpf(cpf_usuario);
-         if (!cpfHValidation.isValid) {
-            throw new AppError(
-               (await cpfHValidation).message,
-               "VALIDATION_ERROR",
-               400
-            )
-         }
+         // const cpfHValidation = await validateHCpf(cpf_usuario);
+         // if (!cpfHValidation.isValid) {
+         //    throw new AppError(
+         //       (await cpfHValidation).message,
+         //       "VALIDATION_ERROR",
+         //       400
+         //    )
+         // }
 
          // 2. Chama o Serviço (que agora só faz a lógica de negócio)
          const newUser: User = await UserService.createUser({
