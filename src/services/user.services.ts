@@ -118,4 +118,22 @@ export class UserService {
          throw new AppError("Usuário não encontrado", "USER_NOT_FOUND", 404);
       }
    }
+
+   static async login(email: string, senhaLogin: string) {
+      const user = await UserModel.getByEmail(email);
+
+      if (!user) {
+         throw new AppError("Email ou senha incorretos", "AUTH_ERROR", 401);
+      }
+
+      const isPasswordValid = await bcrypt.compare(senhaLogin, user.password_user);
+
+      if (!isPasswordValid) {
+         throw new AppError("Email ou senha incorretos", "AUTH_ERROR", 401);
+      }
+
+      const { password_user, ...userWithoutPassword } = user;
+      
+      return userWithoutPassword; 
+   }
 }

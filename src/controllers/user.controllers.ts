@@ -150,6 +150,22 @@ export class UserController {
       }
    }
 
+   async loginUser(req: Request, res: Response) {
+      const { email, password } = req.body;
+   
+      try {
+         const user = await UserService.login(email, password);
+   
+         return res.status(200).json({
+            status: "success",
+            data: user
+         });
+   
+      } catch (err) {
+         throw err;
+      }
+   }
+
    testError(req: Request, res: Response) {
       throw new AppError("Erro padrão de teste", "TEST_ERROR", 401);
    }

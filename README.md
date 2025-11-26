@@ -8,6 +8,7 @@ Rotas Crud
     GET ALL /users/
     GET /users/:id
     POST /users/
+    POST /users/login
     PUT /users/:id
     DELETE /users/:id
 
