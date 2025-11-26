@@ -126,6 +126,9 @@ export class UserService {
          throw new AppError("Email ou senha incorretos", "AUTH_ERROR", 401);
       }
 
+      const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "12");
+      const hashedPassword = await bcrypt.hash(senhaLogin, saltRounds);
+
       const isPasswordValid = await bcrypt.compare(senhaLogin, user.password_user);
 
       if (!isPasswordValid) {
