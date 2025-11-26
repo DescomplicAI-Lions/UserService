@@ -120,16 +120,17 @@ export class UserService {
    }
 
    static async login(email: string, senhaLogin: string) {
+      if (!senhaLogin) {
+         throw new AppError("Senha é obrigatória", "VALIDATION_ERROR", 400);
+     }
+
       const user = await UserModel.getByEmail(email);
 
       if (!user) {
          throw new AppError("Email ou senha incorretos", "AUTH_ERROR", 401);
       }
 
-      const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || "12");
-      const hashedPassword = await bcrypt.hash(senhaLogin, saltRounds);
-
-      const isPasswordValid = await bcrypt.compare(hashedPassword, user.password_user);
+      const isPasswordValid = await bcrypt.compare(senhaLogin, user.password_user);
 
       if (!isPasswordValid) {
          throw new AppError("Email ou senha incorretos", "AUTH_ERROR", 401);
