@@ -265,6 +265,6 @@ export const UserModel = {
             result.error
          );
       }
-   },
+   }
    // --- FIM DOS MÉTODOS ---
 };
