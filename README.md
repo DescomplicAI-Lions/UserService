@@ -8,8 +8,27 @@ Rotas Crud
     GET ALL /users/
     GET /users/:id
     POST /users/
+
+    {
+        "nome": "Exemplo",
+        "senha": "Exemplosenh@2025",
+        "email": "exemplo@exemplo.com",
+        "data_nascimento": "yyyy-mm-dd",
+        "cpf": "111.111.111-11"
+    }
     POST /users/login
+
+        {
+            "email": "exemplo@exemplo.com",
+            "password": "Exemplosenh@2025"
+        }
     PUT /users/:id
+
+    {
+        "nome": "Exemplo",
+        "senha": "Exemplosenh@2025",
+        "email": "exemplo@exemplo.com",
+    }
     DELETE /users/:id
 
 Rotas documentação
