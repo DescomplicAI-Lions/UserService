@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../errors/AppError";
-import { User } from "../interfaces/user.interface"; // Import User interface
+import { User } from "../interfaces/user.interface"; 
 import { UserService } from "../services/user.services";
 import {
    validateEmail,
@@ -127,6 +127,23 @@ export class UserController {
             );
          }
          const updatedUser: User = await UserService.updateUser(id, req.body); 
+         res.json(updatedUser);
+      } catch (err) {
+         throw err;
+      }
+   }
+
+   async updatePassword(req: Request, res: Response) {
+      try {
+         const id = Number(req.params.id);
+         if (isNaN(id)) {
+            throw new AppError(
+               "ID de usuário inválido",
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+         const updatedUser: User = await UserService.updatePasswordUser(id, req.body); 
          res.json(updatedUser);
       } catch (err) {
          throw err;
