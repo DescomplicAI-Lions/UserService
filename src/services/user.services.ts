@@ -29,8 +29,9 @@ export class UserService {
       telefone?: string;
       data_nascimento: Date;
       cpf_usuario: string;
+      imagem?: string;
    }): Promise<User> {
-      const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = data;
+      const { nome, email, senha, telefone, data_nascimento, cpf_usuario, imagem } = data;
 
       // 1. Verifica duplicidade (Lógica de negócio)
       const existingUser = await UserModel.getByEmail(email);
@@ -53,7 +54,8 @@ export class UserService {
          phone: telefone,
          is_verified: false,
          born_date: data_nascimento,
-         cpf: cpf_usuario
+         cpf: cpf_usuario,
+         profile_image: imagem
       };
 
       // 3. Cria no Banco (Lógica de negócio)
@@ -67,7 +69,7 @@ export class UserService {
 
    static async updateUser(
       id: number,
-      data: { nome?: string; email?: string; senha?: string; telefone?: string }
+      data: { nome?: string; email?: string; telefone?: string, imagem?: string }
    ): Promise<User> {
       if (Object.keys(data).length === 0) {
          throw new AppError(
@@ -76,6 +78,7 @@ export class UserService {
             400
          );
       }
+
       if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
          throw new AppError(
             "Formato de e-mail inválido.",
@@ -83,6 +86,40 @@ export class UserService {
             400
          );
       }
+
+      const existingUser = await UserModel.getById(id);
+
+      if (!existingUser) {
+         throw new AppError("Usuário não encontrado", "USER_NOT_FOUND", 404);
+      }
+
+      const userUpdates: UpdateUserDTO = {};
+
+      if (data.nome !== undefined) userUpdates.name_user = data.nome;
+      if (data.email !== undefined) userUpdates.email = data.email;
+      if (data.telefone !== undefined) userUpdates.phone = data.telefone;
+      if (data.imagem !== undefined) userUpdates.profile_image = data.imagem;
+
+      const updatedUser = await UserModel.update(id, userUpdates);
+
+      if (!updatedUser) {
+         throw new AppError("Falha ao atualizar usuário", "UPDATE_FAILED", 500);
+      }
+      return updatedUser;
+   }
+
+   static async updatePasswordUser(
+      id: number,
+      data: { senha?: string; }
+   ): Promise<User> {
+      if (Object.keys(data).length === 0) {
+         throw new AppError(
+            "Nenhum dado fornecido para atualização.",
+            "VALIDATION_ERROR",
+            400
+         );
+      }
+
       if (data.senha && data.senha.length < 6) {
          throw new AppError(
             "A senha deve ter no mínimo 6 caracteres.",
@@ -97,9 +134,6 @@ export class UserService {
       }
 
       const userUpdates: UpdateUserDTO = {};
-      if (data.nome !== undefined) userUpdates.name_user = data.nome;
-      if (data.email !== undefined) userUpdates.email = data.email;
-      if (data.telefone !== undefined) userUpdates.phone = data.telefone;
 
       if (data.senha) {
          userUpdates.password_user = await bcrypt.hash(data.senha, saltRounds);
@@ -109,6 +143,7 @@ export class UserService {
       if (!updatedUser) {
          throw new AppError("Falha ao atualizar usuário", "UPDATE_FAILED", 500);
       }
+
       return updatedUser;
    }
 

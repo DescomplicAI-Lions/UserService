@@ -1,14 +1,41 @@
-# UserService
-URL 
+## UserService
+**URL Vercel:** 
 
-    https://user-service-gamma.vercel.app/
+*    https://user-service-gamma.vercel.app/
     
-Rotas Crud
+## 👤 Rotas de Usuário (CRUD)
+**Base URL:** `/users`
 
-    GET ALL /users/
-    GET /users/:id
-    POST /users/
+*   **Listar todos os usuários**
+    *   `GET /users/`
 
+*   **Buscar usuário por ID**
+    *   `GET /users/:id`
+
+*   **Atualizar dados do usuário**
+    *   `PUT /users/:id`
+    ```json
+    {
+        "nome": "Exemplo Atualizado",
+        "email": "exemplo@exemplo.com",
+        "telefone": "5542999999999",
+        "imagem": "fadsflhadlsficfjklhjals..."
+    }
+    ```
+
+*   **Deletar usuário**
+    *   `DELETE /users/:id`
+
+---
+
+## 🔐 Rotas de Autenticação
+**Base URL:** `/auth`
+
+### Registro e Login Tradicional
+
+*   **Registrar novo usuário**
+    *   `POST /auth/register`
+    ```json
     {
         "nome": "Exemplo",
         "senha": "Exemplosenh@2025",
@@ -16,34 +43,86 @@ Rotas Crud
         "data_nascimento": "yyyy-mm-dd",
         "cpf": "111.111.111-11"
     }
-    POST /users/login
+    ```
 
-        {
-            "email": "exemplo@exemplo.com",
-            "password": "Exemplosenh@2025"
-        }
-    PUT /users/:id
-
+*   **Login (Senha)**
+    *   `POST /auth/login`
+    ```json
     {
-        "nome": "Exemplo",
-        "senha": "Exemplosenh@2025",
         "email": "exemplo@exemplo.com",
+        "password": "Exemplosenh@2025"
     }
-    DELETE /users/:id
+    ```
 
-Rotas documentação
+*   **Atualizar Senha (Logado)**
+    *   `PUT /auth/:id`
+    ```json
+    {
+        "senha": "NovaSenha@2025"
+    }
+    ```
 
-    GET /swagger.json
-    GET /health
+### Magic Link (Login sem senha)
 
-Rotas recuperação
+*   **Solicitar Magic Link**
+    *   `POST /auth/request-magic-link`
+    *   *Headers:* `Origin: https://seu-frontend.com` (ou enviar `redirectUrl` no body)
+    ```json
+    {
+        "email": "exemplo@exemplo.com"
+    }
+    ```
 
-    POST /auth/request-magic-link:
-        Body: {"email": "test@example.com"}
-    POST /auth/authenticate-magic-link:
-        Body: {"token": "TOKEN_GERADO"}
+*   **Autenticar com Magic Link**
+    *   `POST /auth/authenticate-magic-link`
+    ```json
+    {
+        "token": "TOKEN_JWT_RECEBIDO_NO_EMAIL"
+    }
+    ```
 
-Rotas Confirmação
+### Recuperação de Senha (Esqueci a senha)
 
-    POST /email-confirmation/request-confirmation-link
-    GET /email-confirmation/confirm-email?token=YOUR_TOKEN
+*   **Solicitar Redefinição de Senha**
+    *   `POST /auth/forgot-password`
+    *   *Headers:* `Origin: https://seu-frontend.com` (ou enviar `redirectUrl` no body)
+    ```json
+    {
+        "email": "exemplo@exemplo.com"
+    }
+    ```
+
+*   **Redefinir Senha**
+    *   `POST /auth/reset-password`
+    ```json
+    {
+        "token": "TOKEN_RECEBIDO_NO_EMAIL",
+        "newPassword": "NovaSenhaSegura@123"
+    }
+    ```
+
+---
+
+## 📧 Rotas de Confirmação de E-mail
+**Base URL:** `/email-confirmation`
+
+*   **Solicitar novo link de confirmação**
+    *   `POST /email-confirmation/request-confirmation-link`
+    ```json
+    {
+        "email": "exemplo@exemplo.com"
+    }
+    ```
+
+*   **Confirmar E-mail**
+    *   `GET /email-confirmation/confirm-email?token=YOUR_TOKEN`
+
+---
+
+## 📚 Outras Rotas
+
+*   **Documentação Swagger**
+    *   `GET /swagger.json`
+
+*   **Health Check**
+    *   `GET /health`
