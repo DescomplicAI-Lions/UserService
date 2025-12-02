@@ -17,11 +17,10 @@ export interface User {
     cpf: string;
 }
 
-export type CreateUserDTO = Omit<User, "id" | "creation_data" | "profile_image" | "type_user" | "status"  | "temp_login_expire" | "is_verified" | "confirmation_token" | "confirmation_token_expires"> & {
+export type CreateUserDTO = Omit<User, "id" | "creation_data" | "profile_image" | "status"  | "temp_login_expire" | "is_verified" | "confirmation_token" | "confirmation_token_expires"> & {
     profile_image?: string;
-    type_user?: string;
     status?: string;
     is_verified?: boolean; 
 };
 
-export type UpdateUserDTO = Partial<Omit<User, "id" | "creation_data" | "born_date" | "cpf">>;
+export type UpdateUserDTO = Partial<Omit<User, "id" | "creation_data" | "born_date" | "cpf" | "type_user" >>;

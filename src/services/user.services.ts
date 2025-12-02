@@ -30,8 +30,9 @@ export class UserService {
       data_nascimento: Date;
       cpf_usuario: string;
       imagem?: string;
+      tipo: string;
    }): Promise<User> {
-      const { nome, email, senha, telefone, data_nascimento, cpf_usuario, imagem } = data;
+      const { nome, email, senha, telefone, data_nascimento, cpf_usuario, imagem, tipo } = data;
 
       // 1. Verifica duplicidade (Lógica de negócio)
       const existingUser = await UserModel.getByEmail(email);
@@ -55,7 +56,8 @@ export class UserService {
          is_verified: false,
          born_date: data_nascimento,
          cpf: cpf_usuario,
-         profile_image: imagem
+         profile_image: imagem,
+         type_user: tipo
       };
 
       // 3. Cria no Banco (Lógica de negócio)
