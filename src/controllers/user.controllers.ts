@@ -40,7 +40,7 @@ export class UserController {
       }
    }
 
-   async create(req: Request, res: Response, next: NextFunction) {
+   async createOwner(req: Request, res: Response, next: NextFunction) {
       try {
          const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
 
@@ -107,7 +107,162 @@ export class UserController {
             senha,
             telefone,
             data_nascimento,
-            cpf_usuario
+            cpf_usuario,
+            tipo: "owner"
+         });
+
+         res.status(201).json(newUser);
+      } catch (err) {
+         next(err); // Passa o erro para o middleware de errorHandlin
+      }
+   }
+
+   async createEmployee(req: Request, res: Response, next: NextFunction) {
+      try {
+         const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
+
+         // Valida o Nome
+         const nameValidation = validateName(nome);
+         if (!nameValidation.isValid) {
+            throw new AppError(nameValidation.message, "VALIDATION_ERROR", 400);
+         }
+
+         // Valida o Email
+         const emailValidation = validateEmail(email);
+         if (!emailValidation.isValid) {
+            throw new AppError(
+               emailValidation.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+
+         // Valida a Senha
+         const passwordValidation = validatePassword(senha);
+         if (!passwordValidation.isValid) {
+            throw new AppError(
+               passwordValidation.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+
+         // Valida o cpf
+         // Produção
+         const cpfValidation = await validateCpf(cpf_usuario);
+         if (!cpfValidation.isValid) {
+            throw new AppError(
+               (await cpfValidation).message,
+               "VALIDATION_ERROR",
+               400
+            )
+         }
+
+         // Homologação
+         // const cpfHValidation = await validateHCpf(cpf_usuario);
+         // if (!cpfHValidation.isValid) {
+         //    throw new AppError(
+         //       (await cpfHValidation).message,
+         //       "VALIDATION_ERROR",
+         //       400
+         //    )
+         // }
+
+         const bornValidate = validateBornDate(data_nascimento);
+         if (!bornValidate.isValid) {
+            throw new AppError(
+               bornValidate.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+
+         // 2. Chama o Serviço (que agora só faz a lógica de negócio)
+         const newUser: User = await UserService.createUser({
+            nome,
+            email,
+            senha,
+            telefone,
+            data_nascimento,
+            cpf_usuario,
+            tipo: "employee"
+         });
+
+         res.status(201).json(newUser);
+      } catch (err) {
+         next(err); // Passa o erro para o middleware de errorHandlin
+      }
+   }
+
+   async createClient(req: Request, res: Response, next: NextFunction) {
+      try {
+         const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
+
+         // Valida o Nome
+         const nameValidation = validateName(nome);
+         if (!nameValidation.isValid) {
+            throw new AppError(nameValidation.message, "VALIDATION_ERROR", 400);
+         }
+
+         // Valida o Email
+         const emailValidation = validateEmail(email);
+         if (!emailValidation.isValid) {
+            throw new AppError(
+               emailValidation.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+
+         // Valida a Senha
+         const passwordValidation = validatePassword(senha);
+         if (!passwordValidation.isValid) {
+            throw new AppError(
+               passwordValidation.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+
+         // Valida o cpf
+         // Produção
+         const cpfValidation = await validateCpf(cpf_usuario);
+         if (!cpfValidation.isValid) {
+            throw new AppError(
+               (await cpfValidation).message,
+               "VALIDATION_ERROR",
+               400
+            )
+         }
+
+         // Homologação
+         // const cpfHValidation = await validateHCpf(cpf_usuario);
+         // if (!cpfHValidation.isValid) {
+         //    throw new AppError(
+         //       (await cpfHValidation).message,
+         //       "VALIDATION_ERROR",
+         //       400
+         //    )
+         // }
+
+         const bornValidate = validateBornDate(data_nascimento);
+         if (!bornValidate.isValid) {
+            throw new AppError(
+               bornValidate.message,
+               "VALIDATION_ERROR",
+               400
+            );
+         }
+
+         // 2. Chama o Serviço (que agora só faz a lógica de negócio)
+         const newUser: User = await UserService.createUser({
+            nome,
+            email,
+            senha,
+            telefone,
+            data_nascimento,
+            cpf_usuario,
+            tipo: "client"
          });
 
          res.status(201).json(newUser);
