@@ -9,8 +9,8 @@ authRoutes.post("/register/employee", loginController.createEmployee);
 authRoutes.post("/register/client", loginController.createClient); 
 authRoutes.post("/login", loginController.loginUser);
 authRoutes.put("/:id", loginController.updatePassword); 
+authRoutes.post("/logout/:id", loginController.logoutUser);
 // TODO
-// authRoutes.post("/logout", loginController.TODO);
 // authRoutes.post("/refresh-token", loginController.TODO);
 
 export {

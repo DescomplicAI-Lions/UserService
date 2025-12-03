@@ -25,7 +25,7 @@ export const UserModel = {
 
    async getById(id: number): Promise<User | undefined> {
       const result = await database.query<User>(
-         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf
+         `SELECT id, name_user, email, creation_data, profile_image, type_user, status, phone, temp_login_token, temp_login_expire, is_verified, confirmation_token, confirmation_token_expires, born_date, cpf, refresh_token, refresh_token_expire
        FROM descomplicai.user WHERE id = $1`,
          [id]
       );
@@ -128,10 +128,6 @@ export const UserModel = {
       if (data.profile_image !== undefined) {
          setClauses.push(`profile_image = $${paramIndex++}`);
          values.push(data.profile_image);
-      }
-      if (data.type_user !== undefined) {
-         setClauses.push(`type_user = $${paramIndex++}`);
-         values.push(data.type_user);
       }
       if (data.status !== undefined) {
          setClauses.push(`status = $${paramIndex++}`);

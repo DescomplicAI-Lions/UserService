@@ -113,7 +113,7 @@ export function validatePassword(password: string): {
 }
 
 // -- VALIDAÇÃO DE CPF --
-// FIXME documentado partes que necessitam da API externa
+//    Validação de cpf ativa utilizando api externa somente pago 
 async function validateCpfAPI(cpf: string): Promise<CpfValidationResult> {
    try {
        // 1. Limpa os caracteres do cpf, somente números

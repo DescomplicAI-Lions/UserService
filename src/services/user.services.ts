@@ -1,4 +1,6 @@
 import bcrypt from "bcrypt";
+import * as crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { AppError } from "../errors/AppError";
 import {
    CreateUserDTO,
@@ -8,6 +10,7 @@ import {
 import { UserModel } from "../models/user.models";
 import { EmailService } from "./email.services";
 import { EmailConfirmationService } from "./emailConfirmation.services";
+import { config } from "../config/env";
 
 const saltRounds = 10;
 const emailService = new EmailService();
@@ -173,8 +176,45 @@ export class UserService {
          throw new AppError("Email ou senha incorretos", "AUTH_ERROR", 401);
       }
 
+      const token = jwt.sign(
+         { id: user.id, email: user.email },
+         config.app_jwt || 'your_secret_key', 
+         { expiresIn: '15m' }
+     );
+ 
+     const refreshToken = crypto.randomBytes(40).toString('hex');
+ 
+     const refreshTokenExpire = new Date();
+     refreshTokenExpire.setDate(refreshTokenExpire.getDate() + 15);
+ 
+     await UserModel.update(user.id, {
+         status: 'online',
+         refresh_token: refreshToken,
+         refresh_token_expire: refreshTokenExpire
+     });
+
       const { password_user, ...userWithoutPassword } = user;
-      
-      return userWithoutPassword; 
+
+      return {
+         user: userWithoutPassword,
+         token,       
+         refreshToken  
+     };
+   }
+
+   static async logout(id: number): Promise<void> {
+      const user = await UserModel.getById(id);
+
+      if (!user) {
+         throw new AppError("User not found", "NOT_FOUND", 404);
+      }
+
+      const logoutData: UpdateUserDTO = {
+         status: 'offline',
+         refresh_token: null,
+         refresh_token_expire: null
+      };
+
+      await UserModel.update(id, logoutData);
    }
 }

@@ -11,16 +11,16 @@ import {
 } from "../utils/validators";
 
 export class UserController {
-   async getAll(req: Request, res: Response) {
+   async getAll(req: Request, res: Response, next: NextFunction) {
       try {
          const users: User[] = await UserService.getAll(); 
          res.json(users);
       } catch (err) {
-         throw err;
+         next(err);
       }
    }
 
-   async getById(req: Request, res: Response) {
+   async getById(req: Request, res: Response, next: NextFunction) {
       try {
          const id = Number(req.params.id);
          if (isNaN(id)) {
@@ -36,7 +36,7 @@ export class UserController {
          }
          res.json(user);
       } catch (err) {
-         throw err;
+         next(err);
       }
    }
 
@@ -322,7 +322,7 @@ export class UserController {
       }
    }
 
-   async loginUser(req: Request, res: Response) {
+   async loginUser(req: Request, res: Response, next: NextFunction) {
       const { email, password } = req.body;
    
       try {
@@ -332,10 +332,25 @@ export class UserController {
             status: "success",
             data: user
          });
-   
+      
       } catch (err) {
-         throw err;
+         next(err);
       }
+   }
+
+   async logoutUser(req: Request, res: Response, next: NextFunction) {
+      const id = Number(req.params.id); //FIXME arrumar risco de segurança
+
+      try {
+         await UserService.logout(Number(id));
+ 
+         return res.status(200).json({
+             status: "success",
+             message: "User logged out successfully"
+         });
+     } catch (err) {
+         next(err);
+     }
    }
 
    testError(req: Request, res: Response) {
