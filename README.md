@@ -33,8 +33,32 @@
 
 ### Registro e Login Tradicional
 
-*   **Registrar novo usuário**
-    *   `POST /auth/register`
+*   **Registrar novo usuário Owner**
+    *   `POST /auth/register/owner`
+    ```json
+    {
+        "nome": "Exemplo",
+        "senha": "Exemplosenh@2025",
+        "email": "exemplo@exemplo.com",
+        "data_nascimento": "yyyy-mm-dd",
+        "cpf": "111.111.111-11"
+    }
+    ```
+
+*   **Registrar novo usuário Employee**
+    *   `POST /auth/register/employee`
+    ```json
+    {
+        "nome": "Exemplo",
+        "senha": "Exemplosenh@2025",
+        "email": "exemplo@exemplo.com",
+        "data_nascimento": "yyyy-mm-dd",
+        "cpf": "111.111.111-11"
+    }
+    ```
+
+*   **Registrar novo usuário Client**
+    *   `POST /auth/register/client`
     ```json
     {
         "nome": "Exemplo",
@@ -100,6 +124,9 @@
         "newPassword": "NovaSenhaSegura@123"
     }
     ```
+
+*   **Solicitar Logout**
+    *   `POST /auth/logout/:id`
 
 ---
 
