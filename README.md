@@ -41,7 +41,7 @@
         "senha": "Exemplosenh@2025",
         "email": "exemplo@exemplo.com",
         "data_nascimento": "yyyy-mm-dd",
-        "cpf": "111.111.111-11"
+        "cpf_usuario": "111.111.111-11"
     }
     ```
 

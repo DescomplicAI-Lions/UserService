@@ -9,7 +9,7 @@ dotenv.config({
 export const config = {
     app_name: process.env.APP_ENV,
     app_port: process.env.PORT_ENV,
-    app_jwt: process.env.JWT_SECRET,
+    app_jwt: process.env.JWT_SECRET || "cinco",
 
     db_host: process.env.DB_HOST,
     db_port: process.env.DB_PORT,
