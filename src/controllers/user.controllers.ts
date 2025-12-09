@@ -72,14 +72,14 @@ export class UserController {
 
          // Valida o cpf
          // Produção
-         const cpfValidation = await validateCpf(cpf_usuario);
-         if (!cpfValidation.isValid) {
-            throw new AppError(
-               (await cpfValidation).message,
-               "VALIDATION_ERROR",
-               400
-            )
-         }
+         // const cpfValidation = await validateCpf(cpf_usuario);
+         // if (!cpfValidation.isValid) {
+         //    throw new AppError(
+         //       (await cpfValidation).message,
+         //       "VALIDATION_ERROR",
+         //       400
+         //    )
+         // }
 
          // Homologação
          // const cpfHValidation = await validateHCpf(cpf_usuario);
