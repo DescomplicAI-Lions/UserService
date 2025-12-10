@@ -153,3 +153,20 @@
 
 *   **Health Check**
     *   `GET /health`
+
+### 💻 Base 64
+
+*   **Codificar**
+    *   const originalString = "Olá, Mundo! 😊";
+        const buffer = Buffer.from(originalString, 'utf-8');
+        const encodedString = buffer.toString('base64');
+        console.log("Codificado:", encodedString); // Ex: T2zDoSwgTXVuZG8hIMKp
+
+*   **Decodificar**
+    *   const decodedBuffer = Buffer.from(encodedString, 'base64');
+        const decodedString = decodedBuffer.toString('utf-8');
+        console.log("Decodificado:", decodedString); // Ex: Olá, Mundo! 😊
+
+*   **Usos**
+    *   Foi feito a codificação no backend
+    *   Falta a decodificação no front para a imagem.

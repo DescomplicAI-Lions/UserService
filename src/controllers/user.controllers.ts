@@ -42,7 +42,7 @@ export class UserController {
 
    async createOwner(req: Request, res: Response, next: NextFunction) {
       try {
-         const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
+         const { nome, email, senha, data_nascimento, cpf_usuario } = req.body;
 
          // Valida o Nome
          const nameValidation = validateName(nome);
@@ -105,7 +105,6 @@ export class UserController {
             nome,
             email,
             senha,
-            telefone,
             data_nascimento,
             cpf_usuario,
             tipo: "owner"
@@ -119,7 +118,7 @@ export class UserController {
 
    async createEmployee(req: Request, res: Response, next: NextFunction) {
       try {
-         const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
+         const { nome, email, senha, data_nascimento, cpf_usuario } = req.body;
 
          // Valida o Nome
          const nameValidation = validateName(nome);
@@ -182,7 +181,6 @@ export class UserController {
             nome,
             email,
             senha,
-            telefone,
             data_nascimento,
             cpf_usuario,
             tipo: "employee"
@@ -196,7 +194,7 @@ export class UserController {
 
    async createClient(req: Request, res: Response, next: NextFunction) {
       try {
-         const { nome, email, senha, telefone, data_nascimento, cpf_usuario } = req.body;
+         const { nome, email, senha, data_nascimento, cpf_usuario } = req.body;
 
          // Valida o Nome
          const nameValidation = validateName(nome);
@@ -259,7 +257,6 @@ export class UserController {
             nome,
             email,
             senha,
-            telefone,
             data_nascimento,
             cpf_usuario,
             tipo: "client"
