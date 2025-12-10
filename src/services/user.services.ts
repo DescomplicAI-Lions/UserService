@@ -103,7 +103,12 @@ export class UserService {
       if (data.nome !== undefined) userUpdates.name_user = data.nome;
       if (data.email !== undefined) userUpdates.email = data.email;
       if (data.telefone !== undefined) userUpdates.phone = data.telefone;
-      if (data.imagem !== undefined) userUpdates.profile_image = data.imagem;
+      if (data.imagem !== undefined) { //FIXME não está convertendo para a base64
+         const buffer = Buffer.from(data.imagem, 'utf-8');
+         const encodedString = buffer.toString('base64');
+
+         userUpdates.profile_image = encodedString;
+      }
 
       const updatedUser = await UserModel.update(id, userUpdates);
 
